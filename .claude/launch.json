@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "type-feels",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8765", "-d", "type-feels"],
+      "port": 8765
+    }
+  ]
+}

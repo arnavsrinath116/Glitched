@@ -1,0 +1,38 @@
+/* 01 · Whisper / Shout */
+.poem {
+  position: absolute; inset: var(--s6) calc(var(--s16) + var(--s4)) var(--s6) var(--s8);
+  display: flex; flex-wrap: wrap; align-content: flex-end; align-items: baseline;
+  column-gap: var(--s3); row-gap: var(--s1);
+  overflow: hidden;
+}
+.word {
+  font-family: var(--flex); line-height: 1; white-space: nowrap;
+  transition: opacity .6s var(--ease), filter .6s var(--ease), transform .6s var(--ease), font-variation-settings .3s, color .3s;
+}
+.word.new { opacity: 0 !important; filter: blur(8px); transform: translateY(var(--s2)); }
+.word.shake { animation: shake .09s infinite; }
+@keyframes shake {
+  25% { translate: calc(var(--k) * -1px) calc(var(--k) * 1px); }
+  50% { translate: calc(var(--k) * 1px) 0; }
+  75% { translate: 0 calc(var(--k) * -1px); }
+}
+
+.empty { align-self: center; width: 100%; font-family: var(--flex); line-height: 1; }
+.empty span { font-size: var(--t-mega); }
+.empty .w-soft { font-variation-settings: "wght" 100, "wdth" 140, "slnt" -10; letter-spacing: .2em; color: #A9A4FF; opacity: .7; }
+.empty .w-mid  { font-variation-settings: "wght" 400, "wdth" 100; font-size: var(--t-h1); color: var(--muted); }
+.empty .w-loud { font-variation-settings: "wght" 1000, "wdth" 25; color: var(--accent); }
+.empty small { display: block; margin-top: var(--s4); font: 400 var(--t-h3)/var(--lh-h3) var(--ui); color: var(--muted); }
+
+.meter {
+  position: absolute; top: var(--s6); bottom: var(--s12); right: var(--s4); width: var(--s16);
+  display: grid; grid-template-columns: 1fr var(--s6); column-gap: var(--s2);
+}
+.meter .cells { grid-column: 2; grid-row: 1 / span 3; display: flex; flex-direction: column; gap: var(--s1); }
+.meter i { flex: 1; min-height: var(--s1); border-radius: 2px; background: var(--line); transition: background .08s; }
+.meter i.on { background: var(--c); }
+.meter .lab { grid-column: 1; font: 700 var(--t-cap)/var(--lh-cap) var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); text-align: right; }
+.meter .top { grid-row: 1; align-self: start; color: var(--accent); }
+.meter .mid { grid-row: 2; align-self: center; color: var(--fg); }
+.meter .bot { grid-row: 3; align-self: end; color: var(--soft); }
+.meter { grid-template-rows: 1fr 1fr 1fr; }

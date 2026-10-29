@@ -1,0 +1,50 @@
+/* 02 · Blackout Poetry */
+.desk {
+  position: absolute; inset: var(--s4) var(--s8);
+  display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--s3);
+  align-items: start; grid-template-rows: 100%;
+}
+.sheet {
+  grid-column: 1 / span 8;
+  padding: var(--s6) var(--s8);
+  background: var(--paper); color: var(--ink);
+  border-radius: 4px;
+  box-shadow: 0 var(--s3) var(--s8) rgba(0, 0, 0, .45);
+}
+.src { margin-bottom: var(--s3); font: 700 var(--t-cap)/var(--lh-cap) var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+.src span { color: #8A857A; font-weight: 400; }
+.page { font: 400 var(--size, 32px)/var(--lh, 48px) var(--serif); font-variation-settings: "opsz" 36; hyphens: none; }
+.count { margin-top: var(--s3); padding-top: var(--s2); border-top: 1px solid rgba(18, 18, 18, .16); font: 700 var(--t-cap)/var(--lh-cap) var(--mono); color: #6E6A61; }
+
+.w { position: relative; transition: color .4s var(--ease); }
+.w::after {
+  content: ""; position: absolute; inset: .12em -.16em .02em;
+  background: var(--ink); border-radius: 2px;
+  transform: scaleX(0) rotate(var(--r)); transform-origin: left center;
+  transition: transform .22s var(--ease);
+}
+.w.out::after { transform: scaleX(1) rotate(var(--r)); }
+.sheet.revealed .w:not(.out) { color: var(--accent); }
+.sheet.revealed .src, .sheet.revealed .count { opacity: .4; }
+
+.yours { grid-column: 9 / span 4; padding-top: var(--s2); color: var(--fg); }
+.yours .eyebrow { font: 700 var(--t-cap)/var(--lh-cap) var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: var(--s3); }
+.poem-out p { margin: 0; font: 400 var(--t-h3)/var(--lh-h3) var(--serif); font-style: italic; }
+.poem-out .placeholder { color: var(--muted); font-style: normal; font-size: var(--t-body); line-height: var(--lh-body); }
+.poem-out[data-len="m"] p { font-size: var(--t-body); line-height: var(--lh-body); }
+.poem-out[data-len="l"] p { font-size: 20px; line-height: var(--lh-body); }
+.desk.revealed .poem-out p { font-weight: 600; }
+.desk.revealed .poem-out[data-len="s"] p { font-size: var(--t-h2); line-height: var(--lh-h2); }
+.yours { max-height: 100%; overflow: hidden; }
+
+.pen {
+  position: absolute; left: 0; top: 0; z-index: 5; pointer-events: none;
+  width: var(--s8); height: var(--s8); margin: calc(var(--s4) * -1) 0 0 calc(var(--s4) * -1);
+  display: grid; place-items: center; font-size: var(--t-h3);
+  border-radius: 50%; border: 3px solid var(--fg);
+  background: conic-gradient(var(--accent) var(--p, 0deg), transparent 0);
+  opacity: 0; transition: opacity .2s, border-color .2s;
+}
+.pen.show { opacity: 1; }
+.pen[data-mode="point"] { border-color: var(--ink); width: var(--s3); height: var(--s3); margin: -12px 0 0 -12px; background: var(--ink); font-size: 0; }
+.pen[data-mode="open"] { width: var(--s16); height: var(--s16); margin: -64px 0 0 -64px; border-style: dashed; border-color: var(--accent); background: rgba(229, 50, 45, .08); }

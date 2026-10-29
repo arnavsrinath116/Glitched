@@ -1,0 +1,15 @@
+/* 03 · Text Rain */
+[data-theme="rain"] .stage {
+  background:
+    radial-gradient(circle, rgba(140, 147, 184, .10) 1px, transparent 1.5px) 0 0 / 8px 8px,
+    radial-gradient(ellipse at 50% 0%, #16205A 0%, var(--bg) 70%);
+}
+canvas.rain { position: absolute; inset: 0; width: 100%; height: 100%; }
+.credit {
+  position: absolute; left: var(--s4); right: var(--s10); bottom: var(--s3);
+  font: 400 var(--t-cap)/var(--lh-cap) var(--mono); color: var(--muted);
+  pointer-events: none;
+}
+.credit span { transition: color .4s; }
+.credit span.on { color: var(--fg); }
+.credit b { margin-left: var(--s2); color: var(--accent); font-weight: 700; }

@@ -1,0 +1,39 @@
+/* 05 · Words That Act */
+.wall { position: absolute; inset: var(--s4) var(--s8) calc(var(--s16) + var(--s6)); }
+.actor {
+  position: absolute; transform: translate(-50%, -50%);
+  display: grid; justify-items: center; gap: var(--s2);
+  transition: opacity .6s var(--ease), filter .6s var(--ease), translate .6s var(--ease);
+}
+.actor.entering { opacity: 0; filter: blur(12px); translate: 0 var(--s4); }
+.actor.leaving { opacity: 0; filter: blur(12px); translate: 0 calc(var(--s4) * -1); }
+.actor .type { position: relative; font-family: var(--flex); line-height: 1; white-space: nowrap; }
+.actor .ch { transform-origin: 50% 100%; will-change: transform, opacity; }
+.actor .tag {
+  font: 400 var(--t-cap)/var(--lh-cap) var(--mono); color: var(--muted); white-space: nowrap;
+}
+.actor .tag b { color: var(--fg); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+
+.type.echo { text-shadow: .08em .08em 0 rgba(214, 194, 255, .45), .16em .16em 0 rgba(214, 194, 255, .25), .24em .24em 0 rgba(214, 194, 255, .12); animation: echo 2.4s var(--ease) infinite; }
+@keyframes echo { 50% { letter-spacing: .08em; } }
+.type.caret::after { content: ""; display: inline-block; width: .06em; height: .9em; margin-left: .04em; background: currentColor; animation: pulse 1s steps(1) infinite; }
+.type .clone { position: absolute; white-space: nowrap; opacity: .3; animation: mill var(--d) ease-in-out infinite alternate; }
+@keyframes mill { to { translate: var(--s6) var(--s1); opacity: .2; } }
+
+.composer {
+  position: absolute; left: var(--s8); right: var(--s10); bottom: var(--s4);
+  display: grid; grid-template-columns: 1fr auto; gap: var(--s2) var(--s2);
+}
+.field {
+  height: var(--s8); padding: 0 var(--s3);
+  border: 2px solid var(--line); border-radius: var(--s4);
+  background: transparent; color: var(--fg);
+  font: 600 var(--t-h3)/var(--lh-h3) var(--ui);
+  outline: none; user-select: text;
+}
+.field:focus { border-color: var(--accent); }
+.field::placeholder { color: var(--muted); }
+.try { grid-column: 1 / -1; display: flex; gap: var(--s1); flex-wrap: wrap; align-items: center; }
+.try > span { font: 700 var(--t-cap)/var(--lh-cap) var(--mono); text-transform: uppercase; color: var(--muted); margin-right: var(--s1); }
+.try .chip { text-transform: none; font-family: var(--ui); }
+.try .chip:hover { border-color: var(--accent); color: var(--accent); }

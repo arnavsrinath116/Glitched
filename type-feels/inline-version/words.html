@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Type Feels</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" crossorigin="anonymous" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,100..900,0..100;1,9..144,100..900,0..100&family=Roboto+Flex:opsz,slnt,wdth,wght@8..144,-10..0,25..151,100..1000&family=Space+Grotesk:wght@400..700&family=Space+Mono:wght@400;700&family=UnifrakturMaguntia&display=swap">
+  <style>
+/* css/system.css */
+/* ==========================================================================
+   TYPE FEELS — design system
+   Every size, gap and line-height is a multiple of the 8pt base unit.
+   ========================================================================== */
+
+:root {
+  /* 8pt spacing scale */
+  --u: 8px;
+  --s1: 8px;  --s2: 16px; --s3: 24px; --s4: 32px; --s5: 40px;
+  --s6: 48px; --s8: 64px; --s10: 80px; --s12: 96px; --s16: 128px;
+
+  /* type scale — size / line-height, all on the 8pt grid */
+  --t-cap: 16px;   --lh-cap: 24px;
+  --t-body: 24px;  --lh-body: 32px;
+  --t-h3: 32px;    --lh-h3: 40px;
+  --t-h2: 48px;    --lh-h2: 56px;
+  --t-h1: 96px;    --lh-h1: 96px;
+  --t-mega: 192px; --lh-mega: 176px;
+
+  --ui: "Space Grotesk", system-ui, sans-serif;
+  --mono: "Space Mono", ui-monospace, monospace;
+  --flex: "Roboto Flex", sans-serif;
+  --serif: "Fraunces", Georgia, serif;
+  --black: "UnifrakturMaguntia", serif;
+
+  --radius: 8px;
+  --bar-h: 64px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+
+  /* default theme (hub) — overridden per station */
+  --bg: #0D0D0F;
+  --fg: #F4F1EA;
+  --accent: #FF5A1F;
+  --muted: #8C8A86;
+  --line: rgba(244, 241, 234, .16);
+  --on-accent: #0D0D0F;
+}
+
+/* -------- station palettes: each pair is ≥ 7:1 contrast fg on bg -------- */
+[data-theme="whisper"] { --bg:#0B0B10; --fg:#F4F1EA; --accent:#FF4D2E; --soft:#A9A4FF; --muted:#7D7A8C; --line:rgba(244,241,234,.14); --on-accent:#0B0B10; }
+[data-theme="blackout"] { --bg:#1B1A17; --fg:#F3EEE3; --accent:#E5322D; --paper:#F3EEE3; --ink:#121212; --muted:#8A857A; --line:rgba(243,238,227,.16); --on-accent:#F3EEE3; }
+[data-theme="rain"]    { --bg:#0A1030; --fg:#FFD23F; --accent:#3D7BFF; --muted:#8C93B8; --line:rgba(255,210,63,.14); --on-accent:#0A1030; }
+[data-theme="face"]    { --bg:#161616; --fg:#F2F2F2; --accent:#FFC93C; --muted:#8E8E8E; --line:rgba(242,242,242,.14); --on-accent:#161616; }
+[data-theme="words"]   { --bg:#101010; --fg:#F4F1EA; --accent:#7CFFB2; --muted:#8A8A8A; --line:rgba(244,241,234,.14); --on-accent:#101010; }
+[data-theme="stretch"] { --bg:#0E0E0E; --fg:#D4FF3A; --accent:#FF3AF2; --muted:#7F8A5A; --line:rgba(212,255,58,.16); --on-accent:#0E0E0E; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 400 var(--t-body)/var(--lh-body) var(--ui);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+
+/* ---------------------------------------------------------------- shell */
+.bar {
+  position: fixed; inset: 0 0 auto 0; z-index: 20;
+  height: var(--bar-h);
+  display: flex; align-items: center; gap: var(--s2);
+  padding: 0 var(--s4);
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px);
+}
+.bar .num { font: 700 var(--t-cap)/var(--lh-cap) var(--mono); color: var(--accent); }
+.bar h1 { margin: 0; font: 600 var(--t-body)/var(--lh-body) var(--ui); letter-spacing: -.01em; }
+.bar .spacer { flex: 1; }
+.chip {
+  display: inline-flex; align-items: center; gap: var(--s1);
+  height: var(--s4); padding: 0 var(--s2);
+  border: 1px solid var(--line); border-radius: var(--s2);
+  font: 700 var(--t-cap)/var(--lh-cap) var(--mono); text-transform: uppercase; letter-spacing: .04em;
+  color: var(--fg); background: transparent; white-space: nowrap;
+}
+.chip.live { border-color: var(--accent); color: var(--accent); }
+.chip.live::before { content: ""; width: var(--s1); height: var(--s1); border-radius: 50%; background: var(--accent); animation: pulse 1.2s infinite; }
+.chip.warn { border-color: var(--accent); background: var(--accent); color: var(--on-accent); }
+button.chip { cursor: pointer; }
+button.chip:hover { border-color: var(--fg); }
+@keyframes pulse { 50% { opacity: .25; } }
+
+.stage { position: fixed; inset: var(--bar-h) 0 0 0; overflow: hidden; }
+.stage.full { inset: 0; }
+
+/* live gesture legend, centred in the top bar */
+.bar .gestures { flex: 1; min-width: 0; display: flex; justify-content: safe center; gap: var(--s3); padding: 0 var(--s2); overflow: hidden; }
+.gesture { display: inline-flex; align-items: center; gap: var(--s1); font: 500 var(--t-cap)/var(--lh-cap) var(--ui); white-space: nowrap; color: var(--muted); transition: color .15s; }
+.gesture b { font-size: var(--t-body); line-height: var(--lh-body); }
+.gesture.on { color: var(--accent); }
+
+/* "?" shortcuts popover, bottom-right */
+.help { position: fixed; right: var(--s3); bottom: var(--s3); z-index: 30; }
+.help-btn {
+  width: var(--s6); height: var(--s6); border-radius: 50%;
+  border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(8px);
+  font: 700 var(--t-body)/1 var(--mono); color: var(--fg); cursor: help;
+  transition: background .2s, color .2s;
+}
+.help:hover .help-btn, .help.open .help-btn { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.help-pop {
+  position: absolute; right: 0; bottom: calc(100% + var(--s1));
+  min-width: calc(var(--s16) * 2.5); padding: var(--s2) var(--s3);
+  border: 1px solid var(--line); border-radius: var(--s2);
+  background: var(--bg); color: var(--fg); box-shadow: 0 var(--s2) var(--s6) rgba(0, 0, 0, .35);
+  display: grid; gap: var(--s1);
+  opacity: 0; visibility: hidden; transform: translateY(var(--s1));
+  transition: opacity .2s var(--ease), transform .2s var(--ease), visibility .2s;
+}
+.help:hover .help-pop, .help:focus-within .help-pop, .help.open .help-pop { opacity: 1; visibility: visible; transform: none; }
+.help-pop .eyebrow { font: 700 var(--t-cap)/var(--lh-cap) var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+.help-pop .row { display: grid; grid-template-columns: var(--s10) 1fr; align-items: center; gap: var(--s2); font: 500 var(--t-cap)/var(--lh-cap) var(--ui); white-space: nowrap; }
+.help-pop .key { justify-self: start; }
+.key {
+  display: inline-grid; place-items: center; min-width: var(--s4); height: var(--s4); padding: 0 var(--s1);
+  border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 6px;
+  font: 700 12px/16px var(--mono);
+}
+.keys { display: flex; gap: var(--s2); align-items: center; font: 500 var(--t-cap)/var(--lh-cap) var(--ui); color: var(--muted); white-space: nowrap; }
+.keys span { display: inline-flex; align-items: center; gap: var(--s1); }
+
+/* --------------------------------------------------------------- intro */
+.intro {
+  position: fixed; inset: 0; z-index: 40;
+  display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--s3);
+  align-content: center;
+  padding: var(--s12) var(--s8);
+  background: var(--bg);
+  transition: opacity .5s var(--ease), visibility .5s;
+}
+.intro.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+.intro .big-num {
+  grid-column: 1 / span 4;
+  font: 900 var(--t-mega)/var(--lh-mega) var(--flex);
+  font-variation-settings: "wdth" 25, "wght" 1000, "opsz" 144;
+  color: var(--accent);
+  letter-spacing: -.04em;
+}
+.intro .body { grid-column: 5 / span 7; }
+.intro .eyebrow { font: 700 var(--t-cap)/var(--lh-cap) var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.intro h2 { margin: var(--s1) 0 var(--s4); font: 700 var(--t-h1)/var(--lh-h1) var(--flex); font-variation-settings: "wdth" 80, "wght" 800, "opsz" 144; letter-spacing: -.03em; }
+.intro ol { list-style: none; margin: 0 0 var(--s5); padding: 0; display: grid; gap: var(--s2); }
+.intro li { display: grid; grid-template-columns: var(--s8) 1fr; align-items: center; gap: var(--s2); font: 400 var(--t-h3)/var(--lh-h3) var(--ui); }
+.intro li .ico {
+  width: var(--s8); height: var(--s8); display: grid; place-items: center;
+  border: 1px solid var(--line); border-radius: var(--s2); font-size: var(--t-h3);
+}
+.intro .actions { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+.btn {
+  height: var(--s8); padding: 0 var(--s5);
+  border: 0; border-radius: var(--s4);
+  background: var(--accent); color: var(--on-accent);
+  font: 700 var(--t-body)/var(--lh-body) var(--ui);
+  cursor: pointer; transition: transform .2s var(--ease);
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:disabled { opacity: .6; cursor: progress; transform: none; }
+.intro .lesson { margin-top: var(--s6); padding-top: var(--s3); border-top: 1px solid var(--line); font: 400 var(--t-body)/var(--lh-body) var(--serif); font-style: italic; color: var(--fg); }
+.intro .lesson b { font: 700 var(--t-cap)/var(--lh-cap) var(--mono); font-style: normal; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-right: var(--s2); }
+.intro .privacy { margin-top: var(--s2); font: 400 var(--t-cap)/var(--lh-cap) var(--ui); color: var(--muted); }
+.intro .error { margin-top: var(--s3); padding: var(--s2) var(--s3); border-radius: var(--radius); background: var(--accent); color: var(--on-accent); font: 500 var(--t-cap)/var(--lh-cap) var(--ui); }
+.intro .error:empty { display: none; }
+
+/* --------------------------------------------------------------- toast */
+.toast {
+  position: fixed; left: 50%; top: calc(var(--bar-h) + var(--s3)); z-index: 30;
+  transform: translate(-50%, -16px); opacity: 0;
+  padding: var(--s1) var(--s3); border-radius: var(--s3);
+  background: var(--fg); color: var(--bg);
+  font: 600 var(--t-cap)/var(--lh-cap) var(--ui);
+  transition: .3s var(--ease); pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------------------------------------------- shared hand cursor layer */
+canvas.hands { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+@media (max-width: 1100px) {
+  .bar .gestures { visibility: hidden; }
+  .intro { padding: var(--s8) var(--s4); }
+  .intro .big-num { grid-column: 1 / -1; font-size: var(--t-h1); line-height: var(--lh-h1); }
+  .intro .body { grid-column: 1 / -1; }
+  .intro h2 { font-size: var(--t-h2); line-height: var(--lh-h2); }
+  .intro li { font-size: var(--t-body); line-height: var(--lh-body); }
+}
+
+/* hidden field that receives typing on typing stations (see TF.textInput) */
+.ghost-input { position: fixed; left: 0; top: 0; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; resize: none; pointer-events: none; }
+</style>
+  <style>
+/* css/words.css */
+/* 05 · Words That Act */
+.wall { position: absolute; inset: var(--s4) var(--s8) calc(var(--s16) + var(--s6)); }
+.actor {
+  position: absolute; transform: translate(-50%, -50%);
+  display: grid; justify-items: center; gap: var(--s2);
+  transition: opacity .6s var(--ease), filter .6s var(--ease), translate .6s var(--ease);
+}
+.actor.entering { opacity: 0; filter: blur(12px); translate: 0 var(--s4); }
+.actor.leaving { opacity: 0; filter: blur(12px); translate: 0 calc(var(--s4) * -1); }
+.actor .type { position: relative; font-family: var(--flex); line-height: 1; white-space: nowrap; }
+.actor .ch { transform-origin: 50% 100%; will-change: transform, opacity; }
+.actor .tag {
+  font: 400 var(--t-cap)/var(--lh-cap) var(--mono); color: var(--muted); white-space: nowrap;
+}
+.actor .tag b { color: var(--fg); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+
+.type.echo { text-shadow: .08em .08em 0 rgba(214, 194, 255, .45), .16em .16em 0 rgba(214, 194, 255, .25), .24em .24em 0 rgba(214, 194, 255, .12); animation: echo 2.4s var(--ease) infinite; }
+@keyframes echo { 50% { letter-spacing: .08em; } }
+.type.caret::after { content: ""; display: inline-block; width: .06em; height: .9em; margin-left: .04em; background: currentColor; animation: pulse 1s steps(1) infinite; }
+.type .clone { position: absolute; white-space: nowrap; opacity: .3; animation: mill var(--d) ease-in-out infinite alternate; }
+@keyframes mill { to { translate: var(--s6) var(--s1); opacity: .2; } }
+
+.composer {
+  position: absolute; left: var(--s8); right: var(--s10); bottom: var(--s4);
+  display: grid; grid-template-columns: 1fr auto; gap: var(--s2) var(--s2);
+}
+.field {
+  height: var(--s8); padding: 0 var(--s3);
+  border: 2px solid var(--line); border-radius: var(--s4);
+  background: transparent; color: var(--fg);
+  font: 600 var(--t-h3)/var(--lh-h3) var(--ui);
+  outline: none; user-select: text;
+}
+.field:focus { border-color: var(--accent); }
+.field::placeholder { color: var(--muted); }
+.try { grid-column: 1 / -1; display: flex; gap: var(--s1); flex-wrap: wrap; align-items: center; }
+.try > span { font: 700 var(--t-cap)/var(--lh-cap) var(--mono); text-transform: uppercase; color: var(--muted); margin-right: var(--s1); }
+.try .chip { text-transform: none; font-family: var(--ui); }
+.try .chip:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+  <script>
+/* js/core.js */
+/* ==========================================================================
+   TYPE FEELS — shared core
+   Station shell (intro, top bar, hint bar), laptop sensors (camera + mic),
+   MediaPipe trackers and small helpers. Everything runs in the browser;
+   nothing is recorded or uploaded.
+   ========================================================================== */
+(() => {
+  'use strict';
+  const TF = (window.TF = {});
+
+  const VISION = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+  const MODELS = {
+    hand: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
+    face: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
+    segment: 'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite',
+  };
+  const SAVE_LIB = 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js';
+
+  /* ------------------------------------------------------------- math */
+  TF.clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  TF.lerp = (a, b, t) => a + (b - a) * t;
+  TF.snap = (v, step = 8) => Math.round(v / step) * step;
+  TF.rand = (a, b) => a + Math.random() * (b - a);
+  TF.ease = (t) => 1 - Math.pow(1 - TF.clamp(t), 3);
+  const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  TF.mix = (a, b, t) => {
+    const A = hex(a), B = hex(b);
+    return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * TF.clamp(t))).join(',')})`;
+  };
+  TF.axes = (o) => Object.entries(o).map(([k, v]) => `"${k}" ${Math.round(v * 10) / 10}`).join(', ');
+
+  const el = (tag, cls, html) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html != null) n.innerHTML = html;
+    return n;
+  };
+  TF.el = el;
+
+  /** Split text into one span per letter (spaces kept as non-breaking). */
+  TF.letters = (host, text) => {
+    host.textContent = '';
+    return [...text].map((ch) => {
+      const s = el('span', 'ch');
+      s.textContent = ch === ' ' ? ' ' : ch;
+      s.style.display = 'inline-block';
+      host.appendChild(s);
+      return s;
+    });
+  };
+
+  /** requestAnimationFrame loop: fn(dt seconds, t seconds). */
+  TF.loop = (fn) => {
+    let last = performance.now();
+    const tick = (now) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(dt, now / 1000);
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+
+  /** Size a canvas to its box at device resolution; returns the 2D context. */
+  TF.fitCanvas = (canvas) => {
+    const fit = () => {
+      const r = canvas.getBoundingClientRect(), d = devicePixelRatio || 1;
+      canvas.width = Math.round(r.width * d);
+      canvas.height = Math.round(r.height * d);
+      canvas.getContext('2d').setTransform(d, 0, 0, d, 0, 0);
+    };
+    fit();
+    addEventListener('resize', fit);
+    return canvas.getContext('2d');
+  };
+
+  /* ---------------------------------------------------------- sensors */
+  let camPromise = null;
+  TF.camera = (w = 1280, h = 720) =>
+    (camPromise ||= (async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: w }, height: { ideal: h }, facingMode: 'user' },
+        audio: false,
+      });
+      const v = el('video');
+      v.muted = true;
+      v.playsInline = true;
+      v.srcObject = stream;
+      await v.play();
+      TF.aspect = v.videoWidth / v.videoHeight || 16 / 9;
+      return v;
+    })().catch((e) => { camPromise = null; throw e; }));
+
+  /**
+   * Microphone, self-calibrating:
+   *   value 0..1  loudness between the room's noise floor and the loudest recent sound
+   *   hit   0..1  a sudden onset (clap, shout, stamp), decays quickly
+   *   hits        counts every onset, so stations never miss one between frames
+   *   tone  0..1  brightness of the sound (low hum → 0, hiss / clap → 1)
+   * Laptop mics vary a lot, so loudness is relative to what this mic has heard,
+   * and the floor never trusts the digital silence some drivers produce.
+   */
+  TF.mic = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+    });
+    const ctx = new AudioContext();
+    await ctx.resume();
+    const an = ctx.createAnalyser();
+    an.fftSize = 2048;
+    an.smoothingTimeConstant = 0.6;
+    const src = ctx.createMediaStreamSource(stream);
+    src.connect(an);
+    const buf = new Float32Array(an.fftSize);
+    const freq = new Float32Array(an.frequencyBinCount);
+    const binHz = ctx.sampleRate / an.fftSize;
+    const m = { floor: -55, ref: -20, slow: -60, db: -90, raw: 0, value: 0, hit: 0, hits: 0, tone: 0.5, gain: 1 };
+    let lastHit = 0;
+    const onHit = (strength) => { m.hits++; m.hit = Math.max(m.hit, strength); };
+
+    // Claps last ~10 ms, shorter than an animation frame, so onsets are found on
+    // the audio thread every ~5 ms. A high-pass filter keeps voices from masking them.
+    let onset = null;
+    try {
+      await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([ONSET_WORKLET], { type: 'application/javascript' })));
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 1000;
+      onset = new AudioWorkletNode(ctx, 'tf-onset');
+      const mute = ctx.createGain();
+      mute.gain.value = 0;
+      src.connect(hp).connect(onset).connect(mute).connect(ctx.destination);
+      onset.port.onmessage = (e) => onHit(e.data);
+    } catch (e) {
+      onset = null; // older browser: fall back to checking once per frame below
+    }
+    m.read = () => {
+      an.getFloatTimeDomainData(buf);
+      let sum = 0;
+      for (let i = 0; i < buf.length; i++) sum += buf[i] * buf[i];
+      m.db = 20 * Math.log10(Math.sqrt(sum / buf.length) + 1e-9);
+
+      // floor: drops quickly to quiet moments, creeps up in loud halls, never below -70 dB
+      m.floor = Math.max(-70, m.floor + (m.db < m.floor ? 0.2 : 0.002) * (m.db - m.floor));
+      // ref: loudest recent sound, slowly relaxing, at least 30 dB above the floor
+      m.ref = m.db > m.ref ? m.ref + 0.3 * (m.db - m.ref) : m.ref - 0.004;
+      m.ref = Math.max(m.ref, m.floor + 30);
+
+      m.raw = TF.clamp((m.db - m.floor - 6) / ((m.ref - m.floor) * m.gain));
+      m.value += (m.raw - m.value) * (m.raw > m.value ? 0.45 : 0.07);
+
+      const now = performance.now();
+      m.slow += (m.db - m.slow) * 0.05;
+      m.hit *= 0.86;
+      if (!onset && m.db - m.slow > 9 && m.db > m.floor + 16 && now - lastHit > 160) {
+        onHit(TF.clamp((m.db - m.slow) / 24 + 0.3));
+        lastHit = now;
+      }
+
+      an.getFloatFrequencyData(freq);
+      let pw = 0, cw = 0;
+      const top = Math.min(freq.length, Math.round(8000 / binHz));
+      for (let i = 2; i < top; i++) { const p = Math.pow(10, freq[i] / 10); pw += p; cw += p * i * binHz; }
+      if (pw > 0 && m.raw > 0.05) m.tone += (TF.clamp((cw / pw - 300) / 3500) - m.tone) * 0.15;
+      return m.value;
+    };
+    m.sensitivity = () => Math.round(100 / m.gain);
+    // gain > 1 = less sensitive: louder sounds needed, and a sharper rise to count as a clap
+    m.setGain = (g) => {
+      m.gain = TF.clamp(g, 0.4, 2.5);
+      if (onset) onset.port.postMessage({ rise: 7 * m.gain });
+    };
+    return m;
+  };
+
+  // Runs on the audio thread. Measures loudness in ~5 ms blocks and reports a hit
+  // when a block jumps well above the recent average: a clap, a stamp, a shouted word.
+  const ONSET_WORKLET = `
+    class Onset extends AudioWorkletProcessor {
+      constructor() {
+        super();
+        this.slow = -70; this.floor = -70; this.last = 0; this.rise = 7; this.acc = 0; this.n = 0;
+        this.port.onmessage = (e) => { this.rise = e.data.rise; };
+      }
+      process(inputs) {
+        const ch = inputs[0] && inputs[0][0];
+        if (!ch) return true;
+        for (let i = 0; i < ch.length; i++) {
+          this.acc += ch[i] * ch[i];
+          if (++this.n < 240) continue;
+          const db = 10 * Math.log10(this.acc / this.n + 1e-12);
+          this.acc = 0; this.n = 0;
+          this.floor = Math.max(-80, this.floor + (db < this.floor ? 0.05 : 0.0005) * (db - this.floor));
+          const jump = db - this.slow;
+          if (jump > this.rise && db > this.floor + 10 && currentTime - this.last > 0.1) {
+            this.last = currentTime;
+            this.port.postMessage(Math.min(1, 0.4 + (jump - this.rise) / 20));
+          }
+          // the average follows rises slowly (so a clap stands out) and falls fast (ready for the next)
+          this.slow += (db - this.slow) * (db > this.slow ? 0.03 : 0.12);
+        }
+        return true;
+      }
+    }
+    registerProcessor('tf-onset', Onset);`;
+
+  /* ------------------------------------------------------- MediaPipe */
+  let visionPromise = null;
+  const vision = () =>
+    (visionPromise ||= (async () => {
+      const mod = await import(`${VISION}/vision_bundle.mjs`);
+      const fileset = await mod.FilesetResolver.forVisionTasks(`${VISION}/wasm`);
+      return { mod, fileset };
+    })().catch((e) => { visionPromise = null; throw e; }));
+
+  async function createTask(kind, opts) {
+    const { mod, fileset } = await vision();
+    for (const delegate of ['GPU', 'CPU']) {
+      try {
+        return await mod[kind].createFromOptions(fileset, { ...opts, baseOptions: { ...opts.baseOptions, delegate } });
+      } catch (e) {
+        if (delegate === 'CPU') throw e;
+      }
+    }
+  }
+  TF.handTracker = (numHands = 2) =>
+    createTask('HandLandmarker', {
+      baseOptions: { modelAssetPath: MODELS.hand },
+      runningMode: 'VIDEO', numHands,
+      minHandDetectionConfidence: 0.6, minHandPresenceConfidence: 0.5, minTrackingConfidence: 0.5,
+    });
+  TF.faceTracker = () =>
+    createTask('FaceLandmarker', {
+      baseOptions: { modelAssetPath: MODELS.face },
+      runningMode: 'VIDEO', numFaces: 1, outputFaceBlendshapes: true,
+    });
+  TF.segmenter = () =>
+    createTask('ImageSegmenter', {
+      baseOptions: { modelAssetPath: MODELS.segment },
+      runningMode: 'VIDEO', outputConfidenceMasks: true, outputCategoryMask: false,
+    });
+
+  /** Run a task only when the webcam has a new frame; returns the latest result. */
+  TF.tracker = (video, task) => {
+    let lastTime = -1, result = null;
+    return () => {
+      if (video.readyState >= 2 && video.currentTime !== lastTime) {
+        lastTime = video.currentTime;
+        result = task.detectForVideo(video, performance.now());
+      }
+      return result;
+    };
+  };
+
+  /* ---------------------------------------------------------- hands */
+  // landmark space is squashed by the camera's aspect ratio, so undo that
+  const D = (a, b) => Math.hypot((a.x - b.x) * (TF.aspect || 16 / 9), a.y - b.y);
+  TF.handDist = D;
+
+  /** Mirror a landmark onto a screen rect. `reach` lets small arm moves cover the screen. */
+  TF.toScreen = (p, rect, reach = 0.12) => ({
+    x: rect.left + TF.clamp((1 - p.x - reach) / (1 - 2 * reach)) * rect.width,
+    y: rect.top + TF.clamp((p.y - reach) / (1 - 2 * reach)) * rect.height,
+  });
+
+  /** Classify a hand: point ☝ · open ✋ · fist ✊ · thumb 👍 · other. */
+  TF.pose = (lm) => {
+    const palm = D(lm[0], lm[9]);
+    const ext = (tip, pip) => D(lm[tip], lm[0]) > D(lm[pip], lm[0]) * 1.12;
+    const f = [ext(8, 6), ext(12, 10), ext(16, 14), ext(20, 18)];
+    const n = f.filter(Boolean).length;
+    const thumbUp = lm[4].y < lm[6].y && lm[2].y - lm[4].y > palm * 0.55;
+    let name = 'other';
+    if (n === 0) name = thumbUp ? 'thumb' : 'fist';
+    else if (f[0] && n === 1) name = 'point';
+    else if (n >= 4) name = 'open';
+    return { name, pinch: D(lm[4], lm[8]) / palm, palm };
+  };
+
+  /** Debounce a label so a pose must hold for a few frames before it counts. */
+  TF.steady = (frames = 4) => {
+    let cur = 'none', cand = 'none', count = 0;
+    return (v) => {
+      if (v === cand) count++;
+      else { cand = v; count = 1; }
+      if (count >= frames) cur = cand;
+      return cur;
+    };
+  };
+
+  const BONES = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],
+    [9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+  /** Draw hands as a quiet skeleton so visitors can see what the camera sees. */
+  TF.drawHands = (ctx, hands, rect, color, reach) => {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.35;
+    ctx.lineWidth = 2;
+    for (const lm of hands) {
+      const p = lm.map((q) => TF.toScreen(q, rect, reach));
+      ctx.beginPath();
+      for (const [a, b] of BONES) { ctx.moveTo(p[a].x, p[a].y); ctx.lineTo(p[b].x, p[b].y); }
+      ctx.stroke();
+      for (const q of p) ctx.fillRect(q.x - 3, q.y - 3, 6, 6);
+    }
+    ctx.restore();
+  };
+
+  /* -------------------------------------------------------- keyboard */
+  /**
+   * Typing goes through a hidden text field that keeps focus. Browser extensions
+   * with single-letter shortcuts (Vimium and friends) swallow keys on a plain page
+   * but leave text fields alone, so every letter reaches the station.
+   * onChar(ch) for each typed character, onKey('Backspace' | 'Enter').
+   */
+  TF.textInput = (onChar, onKey) => {
+    const f = el('textarea', 'ghost-input');
+    f.setAttribute('aria-label', 'Type here');
+    f.setAttribute('autocomplete', 'off');
+    f.setAttribute('autocapitalize', 'off');
+    f.spellcheck = false;
+    document.body.appendChild(f);
+    const focus = () => {
+      const a = document.activeElement;
+      const typingElsewhere = a && a !== f && a.matches('input, textarea, [contenteditable]');
+      if (document.body.classList.contains('started') && a !== f && !typingElsewhere) f.focus({ preventScroll: true });
+    };
+    f.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' || e.key === 'Enter') { e.preventDefault(); onKey(e.key); }
+    });
+    f.addEventListener('input', () => {
+      for (const ch of f.value) onChar(ch);
+      f.value = '';
+    });
+    f.addEventListener('blur', () => setTimeout(focus, 60));
+    addEventListener('pointerup', () => setTimeout(focus, 0));
+    setInterval(focus, 500);
+    return { focus };
+  };
+
+  /** Live-typed word: typing after a pause starts a new word. */
+  TF.typing = (initial, onChange, { max = 16, idle = 2500 } = {}) => {
+    let word = initial, last = 0;
+    const commit = (w) => { last = performance.now(); word = w.slice(0, max); onChange(word); };
+    TF.textInput(
+      (ch) => { if (/[\p{L}\p{N} !?'&.,-]/u.test(ch)) commit((performance.now() - last > idle ? '' : word) + ch); },
+      (k) => { if (k === 'Backspace') commit(word.slice(0, -1)); },
+    );
+    return { get: () => word, set: (w) => { word = w; onChange(w); } };
+  };
+
+  /* ------------------------------------------------------------ save */
+  let saveLib = null;
+  const loadSaveLib = () =>
+    (saveLib ||= new Promise((res, rej) => {
+      const s = el('script');
+      s.src = SAVE_LIB;
+      s.onload = () => res(window.htmlToImage);
+      s.onerror = rej;
+      document.head.appendChild(s);
+    }));
+
+  /** The "?" in the bottom-right corner: hover (or tap) to see every shortcut. */
+  TF.shortcuts = (keys) => {
+    const help = el('div', 'help', `
+      <button class="help-btn" aria-label="Keyboard shortcuts">?</button>
+      <div class="help-pop" role="tooltip">
+        <div class="eyebrow">Shortcuts</div>
+        ${keys.map(([k, l]) => `<div class="row"><span class="key">${k}</span><span>${l}</span></div>`).join('')}
+      </div>`);
+    help.querySelector('.help-btn').onclick = () => help.classList.toggle('open');
+    return help;
+  };
+
+  /* --------------------------------------------------- station shell */
+  const friendly = (e) => {
+    const n = e && e.name;
+    if (n === 'NotAllowedError') return 'Permission was blocked. Click the camera/mic icon in the address bar, choose Allow, then press Start again.';
+    if (n === 'NotFoundError') return 'No camera or microphone was found on this laptop.';
+    if (n === 'NotReadableError') return 'The camera or mic is busy in another app or tab. Close it and try again.';
+    return `Something went wrong: ${e && e.message ? e.message : e}. Check the internet connection (the tracking model loads from the web) and try again.`;
+  };
+
+  /**
+   * Build a station page.
+   * cfg: { theme, num, title, sensors, steps, lesson, privacy, gestures, keys, full, start(api) }
+   */
+  TF.station = (cfg) => {
+    const body = document.body;
+    body.dataset.theme = cfg.theme;
+    document.title = `${cfg.num} ${cfg.title} · Type Feels`;
+
+    const bar = el('header', 'bar', `
+      <a class="chip" href="index.html">← All</a>
+      <span class="num">${cfg.num}</span><h1>${cfg.title}</h1>
+      <span class="gestures">${(cfg.gestures || []).map(([ico, label, id]) => `<span class="gesture" data-g="${id || ''}"><b>${ico}</b>${label}</span>`).join('')}</span>
+      ${cfg.sensors.map((s) => `<span class="chip" data-sensor="${s}">${s}</span>`).join('')}
+      <button class="chip" data-act="help">How to</button>
+      <button class="chip" data-act="full">Fullscreen</button>`);
+    const stage = el('main', 'stage' + (cfg.full ? ' full' : ''));
+    const hint = TF.shortcuts([...(cfg.keys || []), ['Esc', 'All stations']]);
+    const intro = el('section', 'intro', `
+      <div class="big-num">${cfg.num}</div>
+      <div class="body">
+        <div class="eyebrow">Type Feels · ${cfg.sensors.join(' + ')}</div>
+        <h2>${cfg.title}</h2>
+        <ol>${cfg.steps.map(([ico, t]) => `<li><span class="ico">${ico}</span><span>${t}</span></li>`).join('')}</ol>
+        <div class="actions"><button class="btn" data-act="start">Start</button><span class="keys"><span class="key">Enter</span></span></div>
+        <div class="error"></div>
+        <div class="lesson"><b>Design note</b>${cfg.lesson}</div>
+        <div class="privacy">${cfg.privacy || 'Everything happens on this laptop. Nothing is recorded or uploaded.'}</div>
+      </div>`);
+    const toastEl = el('div', 'toast');
+    body.append(stage, bar, hint, intro, toastEl);
+
+    let started = false, toastTimer = 0;
+    const startBtn = intro.querySelector('[data-act="start"]');
+    const errBox = intro.querySelector('.error');
+
+    const api = {
+      stage, hint,
+      keys: {},
+      toast(msg, ms = 2200) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastEl.classList.remove('show'), ms);
+      },
+      status(sensor, state, text) {
+        const c = bar.querySelector(`[data-sensor="${sensor}"]`);
+        if (!c) return;
+        c.className = 'chip' + (state ? ' ' + state : '');
+        c.textContent = text || sensor;
+      },
+      gesture(id) {
+        bar.querySelectorAll('.gesture').forEach((g) => g.classList.toggle('on', g.dataset.g === id));
+      },
+      key(k, fn) { api.keys[k.toLowerCase()] = fn; },
+      async save(node, name, format = 'png') {
+        api.toast('Saving…');
+        try {
+          const lib = await loadSaveLib();
+          let bg = getComputedStyle(node).backgroundColor;
+          if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') bg = getComputedStyle(body).backgroundColor;
+          const url = await (format === 'svg' ? lib.toSvg : lib.toPng)(node, { pixelRatio: 2, backgroundColor: bg });
+          const a = el('a');
+          a.href = url;
+          a.download = `type-feels-${name}-${Date.now()}.${format}`;
+          a.click();
+          api.toast('Saved to Downloads ✓');
+        } catch (e) {
+          api.toast('Could not save. Press Win+Shift+S to screenshot instead.', 3500);
+        }
+      },
+    };
+
+    const showIntro = (on) => {
+      intro.classList.toggle('gone', !on);
+      if (started) startBtn.textContent = 'Back to it';
+    };
+
+    const start = async () => {
+      if (started) return showIntro(false);
+      startBtn.disabled = true;
+      startBtn.textContent = 'Loading…';
+      errBox.textContent = '';
+      try {
+        await cfg.start(api);
+        started = true;
+        body.classList.add('started');
+        showIntro(false);
+      } catch (e) {
+        console.error(e);
+        errBox.textContent = friendly(e);
+        startBtn.textContent = 'Try again';
+      }
+      startBtn.disabled = false;
+    };
+
+    startBtn.onclick = start;
+    bar.querySelector('[data-act="help"]').onclick = () => showIntro(true);
+    bar.querySelector('[data-act="full"]').onclick = () =>
+      document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+
+    addEventListener('keydown', (e) => {
+      const k = e.key.toLowerCase();
+      if (e.ctrlKey && k === 's') { e.preventDefault(); api.keys['save'] && api.keys['save'](); return; }
+      if (k === 'escape') {
+        if (started && !intro.classList.contains('gone')) showIntro(false);
+        else location.href = 'index.html';
+        return;
+      }
+      const introOpen = !intro.classList.contains('gone');
+      if (introOpen) { if (k === 'enter') { e.preventDefault(); start(); } return; }
+      if (!e.ctrlKey && !e.metaKey && api.keys[k]) { e.preventDefault(); api.keys[k](e); }
+    });
+
+    return api;
+  };
+})();
+</script>
+  <script>
+/* js/words.js */
+/* 05 · WORDS THAT ACT
+   Type a word and it behaves like what it means: rain drips, fire flickers,
+   lonely drifts away, shy hides from your cursor. */
+(() => {
+  const { clamp, lerp, snap, rand } = TF;
+  const S = Math.sin, A = Math.abs;
+
+  // name: [trigger words, colour, font axes, per-letter motion (i, n, t, ctx) → {x,y,r,s,sx,sy,o}]
+  const B = {
+    drips:    [['rain', 'cry', 'tear', 'drip', 'wet', 'drown', 'sad', 'monsoon'], '#5CC8FF', { wght: 300, wdth: 90 },
+      (i, n, t) => { const p = (t * 0.5 + i * 0.31) % 1.6; return p < 1 ? { y: p * p * 96, sy: 1 + p * 0.6, o: 1 - p * 0.7 } : { y: 0, o: 1 }; }],
+    flickers: [['fire', 'burn', 'hot', 'flame', 'heat', 'light up', 'spark', 'diwali'], '#FF8A1F', { wght: 800, wdth: 100 },
+      (i, n, t) => ({ y: -A(S(t * 13 + i * 2.1)) * 12, sy: 1 + S(t * 17 + i) * 0.12, o: 0.75 + S(t * 23 + i * 3) * 0.25 })],
+    sinks:    [['heavy', 'weight', 'tired', 'sink', 'stone', 'lazy', 'exhausted', 'monday'], '#B9B4A7', { wght: 1000, wdth: 151 },
+      (i, n) => { const k = n > 1 ? i / (n - 1) : 0.5; return { y: 40 + (1 - Math.pow(2 * k - 1, 2)) * 40, sy: 0.7, sx: 1.12 }; }],
+    floats:   [['light', 'float', 'feather', 'fly', 'balloon', 'dream', 'air', 'cloud', 'free'], '#E8F1FF', { wght: 100, wdth: 110 },
+      (i, n, t) => ({ y: -24 - S(t * 1.2 + i * 0.8) * 20, r: S(t + i) * 6 })],
+    shivers:  [['cold', 'fear', 'scared', 'nervous', 'shiver', 'anxious', 'shake', 'exam'], '#A6F0FF', { wght: 400, wdth: 75 },
+      () => ({ x: rand(-3, 3), y: rand(-3, 3) })],
+    bounces:  [['happy', 'joy', 'jump', 'bounce', 'fun', 'yay', 'excited', 'party'], '#FFE14D', { wght: 900, wdth: 120 },
+      (i, n, t) => ({ y: -A(S(t * 4 - i * 0.5)) * 48, sy: 1 + A(S(t * 4 - i * 0.5)) * 0.08 })],
+    drifts:   [['lonely', 'alone', 'isolated', 'single', 'leave', 'lost', 'goodbye'], '#C9C3FF', { wght: 300, wdth: 100 },
+      (i, n, t) => (i === n - 1 ? { x: 160 + S(t * 0.7) * 32, y: S(t * 0.5) * 24, o: 0.55 } : {})],
+    gathers:  [['crowd', 'many', 'more', 'people', 'busy', 'together', 'friends', 'family'], '#FF7AC8', { wght: 700, wdth: 100 },
+      () => ({}), 'crowd'],
+    grows:    [['grow', 'big', 'bloom', 'huge', 'giant', 'rise', 'expand', 'plant'], '#7CFFB2', { wght: 700, wdth: 100 },
+      (i, n, t) => { const g = 1 + (0.5 + 0.5 * S(t * 0.8 - i * 0.4)) * 0.7; return { s: g, y: -(g - 1) * 32 }; }],
+    shrinks:  [['small', 'tiny', 'shrink', 'little', 'less', 'mini', 'ant'], '#F4F1EA', { wght: 300, wdth: 100 },
+      (i, n, t) => ({ s: 0.35 + S(t * 2 + i) * 0.05 })],
+    spins:    [['spin', 'dizzy', 'twist', 'turn', 'round', 'world', 'circle', 'dance'], '#FFB86B', { wght: 600, wdth: 100 },
+      (i, n, t) => ({ r: (t * 120 + i * 40) % 360 })],
+    waves:    [['wave', 'sea', 'ocean', 'water', 'river', 'flow', 'swim', 'beach'], '#3DD6FF', { wght: 500, wdth: 100 },
+      (i, n, t) => ({ y: S(t * 2.4 - i * 0.6) * 28, r: S(t * 2.4 - i * 0.6 + 1) * 10 })],
+    melts:    [['melt', 'ice', 'wax', 'ice cream', 'summer', 'candle'], '#FFD1F0', { wght: 600, wdth: 100 },
+      (i, n, t) => { const p = (t * 0.25 + i * 0.07) % 1.2; return { sy: 1 + Math.min(1, p) * 1.4, y: Math.min(1, p) * 40, o: 1 - Math.min(1, p) * 0.8 }; }],
+    beats:    [['love', 'heart', 'kiss', 'crush', 'adore', 'care', 'pyaar'], '#FF4D6D', { wght: 800, wdth: 100 },
+      (i, n, t) => { const b = (t * 1.3) % 1; return { s: 1 + Math.max(0, S(b * Math.PI * 2)) * 0.18 * (b < 0.5 ? 1 : 0.5) }; }],
+    rages:    [['angry', 'rage', 'mad', 'furious', 'hate', 'scream', 'loud', 'shout'], '#FF2E2E', { wght: 1000, wdth: 25 },
+      () => ({ x: rand(-8, 8), y: rand(-8, 8), r: rand(-6, 6), s: 1.1 })],
+    breathes: [['calm', 'sleep', 'slow', 'peace', 'breathe', 'quiet', 'whisper', 'soft', 'rest'], '#9FD8C8', { wght: 200, wdth: 100 },
+      (i, n, t) => ({ o: 0.35 + (0.5 + 0.5 * S(t * 0.9)) * 0.65, s: 0.96 + (0.5 + 0.5 * S(t * 0.9)) * 0.06 })],
+    races:    [['fast', 'run', 'quick', 'speed', 'rush', 'hurry', 'race', 'late'], '#FFF15C', { wght: 900, wdth: 110, slnt: -10 },
+      (i, n, t) => ({ x: ((t * 900 + i * 0) % 2400) - 1200 })],
+    hides:    [['shy', 'hide', 'secret', 'hidden', 'private', 'introvert', 'blush'], '#FFB3C7', { wght: 400, wdth: 90 },
+      (i, n, t, c) => { const k = clamp(1 - c.near / 360); return { x: c.away.x * k * 120 * (1 + i * 0.1), y: c.away.y * k * 120, o: 1 - k * 0.85, r: k * 20 * (i % 2 ? 1 : -1) }; }],
+    glitches: [['glitch', 'error', 'broken', 'bug', 'chaos', 'random', 'wifi', 'computer'], '#00FFC2', { wght: 700, wdth: 100 },
+      () => (Math.random() < 0.08 ? { x: rand(-24, 24), sx: rand(0.6, 1.6), glitch: true } : {})],
+    echoes:   [['echo', 'repeat', 'again', 'hello', 'memory', 'remember', 'hello?'], '#D6C2FF', { wght: 600, wdth: 100 },
+      () => ({}), 'echo'],
+    vanishes: [['ghost', 'invisible', 'gone', 'vanish', 'disappear', 'forget', 'fade'], '#F4F1EA', { wght: 300, wdth: 100 },
+      (i, n, t) => ({ o: 0.05 + A(S(t * 1.7 + i * 1.9)) * 0.35, y: S(t + i) * 6 })],
+    blows:    [['wind', 'blow', 'storm', 'breeze', 'wild', 'cyclone'], '#C8F7FF', { wght: 500, wdth: 100 },
+      (i, n, t) => ({ x: i * 10 + S(t * 6 + i) * 12, r: 8 + S(t * 6 + i) * 10, sx: 1.08 })],
+    flips:    [['upside', 'down', 'flip', 'reverse', 'opposite', 'backwards', 'fall'], '#FF9EF5', { wght: 700, wdth: 100 },
+      (i, n, t) => ({ r: 180 * (0.5 - 0.5 * Math.cos(clamp(((t * 0.6 + i * 0.08) % 2) - 0.5) * Math.PI)) })],
+    splits:   [['split', 'break', 'divide', 'crack', 'separate', 'broke', 'half'], '#FF6B3D', { wght: 800, wdth: 100 },
+      (i, n, t) => { const g = Math.max(0, S(t * 1.2)) * 48; return { x: i < n / 2 ? -g : g, r: (i < n / 2 ? -1 : 1) * g * 0.08 }; }],
+    stretches:[['tall', 'long', 'stretch', 'giraffe', 'tower', 'yawn'], '#B6FF5C', { wght: 600, wdth: 25 },
+      (i, n, t) => ({ sy: 1.5 + S(t * 1.5 + i * 0.3) * 0.4, y: -32 })],
+    types:    [['write', 'type', 'read', 'book', 'story', 'poem', 'word', 'letter', 'novel'], '#F4F1EA', { wght: 400, wdth: 100 },
+      (i, n, t) => ({ o: i < Math.floor((t * 6) % (n + 8)) ? 1 : 0 }), 'caret'],
+  };
+  const LOOKUP = new Map();
+  for (const [name, def] of Object.entries(B)) def[0].forEach((w) => LOOKUP.set(w, name));
+
+  function behaviourFor(word) {
+    const w = word.toLowerCase().replace(/[^\p{L}\s?]/gu, '').trim();
+    if (LOOKUP.has(w)) return { name: LOOKUP.get(w), via: w };
+    for (const suf of ['ing', 'ed', 'es', 's', 'y', 'ly', 'ness', 'er', 'ful']) {
+      if (w.endsWith(suf)) {
+        const stem = w.slice(0, -suf.length);
+        for (const cand of [stem, stem + 'e', stem.slice(0, -1)]) if (LOOKUP.has(cand)) return { name: LOOKUP.get(cand), via: cand };
+      }
+    }
+    for (const [k, v] of LOOKUP) if (k.length >= 3 && w.startsWith(k)) return { name: v, via: k };
+    return null;
+  }
+
+  TF.station({
+    theme: 'words', num: '05', title: 'Words That Act', sensors: ['Keyboard', 'Trackpad'],
+    steps: [
+      ['⌨️', 'Type a feeling, a thing or a weather word.'],
+      ['⏎', 'Press Enter and the word acts out what it means.'],
+      ['🖱', 'Some words react to your cursor. Try “shy”.'],
+    ],
+    lesson: 'Expressive typography: when form says the same thing as the word, meaning gets louder.',
+    privacy: 'Nothing typed here is stored.',
+    keys: [['Enter', 'Release word'], ['Del', 'Clear wall'], ['Ctrl S', 'Save']],
+    start,
+  });
+
+  async function start({ stage, toast, key, save }) {
+    const tryWords = ['rain', 'fire', 'lonely', 'heavy', 'shy', 'melt', 'crowd', 'echo', 'glitch', 'love', 'fast', 'whisper'];
+    stage.innerHTML = `
+      <div class="wall"></div>
+      <form class="composer" autocomplete="off">
+        <input class="field" maxlength="16" placeholder="Type a word…" spellcheck="false" aria-label="Word">
+        <button class="btn" type="submit">Release ⏎</button>
+        <div class="try"><span>Try</span>${tryWords.map((w) => `<button type="button" class="chip">${w}</button>`).join('')}</div>
+      </form>`;
+    const wall = stage.querySelector('.wall');
+    const form = stage.querySelector('form');
+    const field = stage.querySelector('.field');
+    setTimeout(() => field.focus(), 300);
+    addEventListener('keydown', (e) => { if (!e.ctrlKey && e.key.length === 1 && document.activeElement !== field) field.focus(); });
+
+    const COLS = 3, ROWS = 3, live = [];
+    let mouse = { x: -9999, y: -9999 };
+    addEventListener('pointermove', (e) => { mouse = { x: e.clientX, y: e.clientY }; });
+
+    function freeSlot() {
+      const used = new Set(live.map((w) => w.slot));
+      const free = [...Array(COLS * ROWS).keys()].filter((s) => !used.has(s));
+      if (!free.length) { const old = live.shift(); old.el.classList.add('leaving'); setTimeout(() => old.el.remove(), 600); return old.slot; }
+      return free[Math.floor(Math.random() * free.length)];
+    }
+
+    function release(text) {
+      text = text.trim();
+      if (!text) return;
+      const hit = behaviourFor(text);
+      const name = hit ? hit.name : 'breathes';
+      const [, color, axes, motion, special] = B[name];
+      const slot = freeSlot();
+      const el = TF.el('div', 'actor entering');
+      el.innerHTML = `<div class="type"></div><div class="tag"><b>${hit ? name : 'just breathes'}</b>${hit ? ` · because “${hit.via}”` : ' · no behaviour yet, try another'}</div>`;
+      const type = el.querySelector('.type');
+      const size = snap(clamp((wall.clientWidth / COLS) * 1.5 / Math.max(3, text.length), 40, 160), 8);
+      type.style.cssText = `font-size:${size}px;color:${color};font-variation-settings:${TF.axes({ ...axes, opsz: Math.min(144, size) })}`;
+      const letters = TF.letters(type, text);
+      if (special === 'crowd') {
+        for (let k = 0; k < 7; k++) {
+          const c = TF.el('div', 'clone');
+          c.textContent = text;
+          c.style.cssText = `font-size:${size * rand(0.18, 0.32)}px;color:${color};left:${rand(-20, 100)}%;top:${rand(-40, 100)}%;--d:${rand(2, 5)}s`;
+          type.appendChild(c);
+        }
+      }
+      if (special === 'echo') type.classList.add('echo');
+      if (special === 'caret') type.classList.add('caret');
+      const col = slot % COLS, row = Math.floor(slot / COLS);
+      el.style.left = (col + 0.5) / COLS * 100 + '%';
+      el.style.top = (row + 0.5) / ROWS * 100 + '%';
+      wall.appendChild(el);
+      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('entering')));
+      live.push({ el, letters, motion, slot, born: performance.now() / 1000, text });
+    }
+
+    form.addEventListener('submit', (e) => { e.preventDefault(); release(field.value); field.value = ''; });
+    form.querySelector('.try').addEventListener('click', (e) => { if (e.target.matches('.chip')) { release(e.target.textContent); field.focus(); } });
+    key('delete', () => { if (document.activeElement === field && field.value) return; live.splice(0).forEach((w) => w.el.remove()); });
+    key('save', () => save(wall, 'words-that-act'));
+
+    const GLYPHS = '!<>-_\\/[]{}—=+*^?#01';
+    TF.loop((dt, t) => {
+      for (const w of live) {
+        const tt = t - w.born, n = w.letters.length;
+        const box = w.el.getBoundingClientRect();
+        const cx = box.left + box.width / 2, cy = box.top + box.height / 2;
+        const dx = cx - mouse.x, dy = cy - mouse.y, near = Math.hypot(dx, dy) || 1;
+        const ctx = { near, away: { x: dx / near, y: dy / near } };
+        w.letters.forEach((L, i) => {
+          const m = w.motion(i, n, tt, ctx) || {};
+          L.style.transform = `translate(${m.x || 0}px, ${m.y || 0}px) rotate(${m.r || 0}deg) scale(${(m.s || 1) * (m.sx || 1)}, ${(m.s || 1) * (m.sy || 1)})`;
+          L.style.opacity = m.o == null ? 1 : clamp(m.o);
+          const ch = w.text[i] === ' ' ? ' ' : w.text[i];
+          L.textContent = m.glitch ? GLYPHS[Math.floor(Math.random() * GLYPHS.length)] : ch;
+        });
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>

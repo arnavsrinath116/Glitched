@@ -1,0 +1,15 @@
+/* 01 · Make Some Noise */
+[data-theme="noise"] { --bg:#C9D6F2; --fg:#0B1A66; --accent:#1F3DFF; --muted:#4A5A99; --line:rgba(11,26,102,.18); --on-accent:#FFFFFF; }
+canvas.noise { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.level {
+  position: absolute; left: var(--s3); bottom: var(--s3);
+  display: flex; align-items: center; gap: var(--s2);
+  height: var(--s6); padding: 0 var(--s3); border-radius: var(--s3);
+  background: color-mix(in srgb, var(--bg) 85%, transparent); border: 1px solid var(--line); backdrop-filter: blur(8px);
+  font: 700 var(--t-cap)/var(--lh-cap) var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--fg);
+  box-shadow: 0 0 0 calc(var(--glow, 0) * 8px) color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.level .cells { display: flex; gap: 4px; }
+.level i { width: var(--s1); height: var(--s3); border-radius: 2px; background: var(--line); }
+.level i.on { background: var(--accent); }
+.level em { font-style: normal; color: var(--muted); text-transform: none; letter-spacing: 0; }

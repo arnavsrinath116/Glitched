@@ -1,0 +1,38 @@
+/* 06 · Stretch the Word */
+[data-theme="stretch"] .stage {
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 64px 64px;
+}
+.word { position: absolute; left: 0; top: 0; padding: 0 var(--s1); will-change: transform; }
+.word .txt { display: block; font-family: var(--flex); line-height: 1; white-space: nowrap; color: var(--fg); letter-spacing: -.01em; }
+.word::before { content: ""; position: absolute; inset: calc(var(--s1) * -1); border: 1px solid var(--accent); opacity: 0; transition: opacity .2s; }
+.word .h { position: absolute; width: var(--s1); height: var(--s1); background: var(--bg); border: 2px solid var(--accent); opacity: 0; transition: opacity .2s; }
+.word.held::before, .word.held .h { opacity: 1; }
+.h.tl { left: -12px; top: -12px; } .h.tr { right: -12px; top: -12px; }
+.h.bl { left: -12px; bottom: -12px; } .h.br { right: -12px; bottom: -12px; }
+
+.axes {
+  position: absolute; left: var(--s4); bottom: var(--s4); width: calc(var(--s16) * 3);
+  padding: var(--s2) var(--s3); border: 1px solid var(--line); border-radius: var(--s2);
+  background: rgba(14, 14, 14, .8); backdrop-filter: blur(8px);
+  display: grid; gap: var(--s1);
+}
+.ax { display: grid; grid-template-columns: var(--s10) 1fr var(--s10); align-items: center; gap: var(--s2); font: 700 var(--t-cap)/var(--lh-cap) var(--mono); }
+.ax span { color: var(--muted); }
+.ax b { height: var(--s1); border-radius: 4px; background: var(--line); overflow: hidden; }
+.ax i { display: block; height: 100%; width: calc(var(--v, 0) * 100%); background: var(--fg); }
+.ax em { font-style: normal; text-align: right; }
+.axes code { margin-top: var(--s1); padding-top: var(--s1); border-top: 1px solid var(--line); font: 400 12px/16px var(--mono); color: var(--accent); }
+
+/* weight slider: its own control, separate from stretching */
+.wslider {
+  position: absolute; right: var(--s4); top: 50%; translate: 0 -50%; z-index: 4;
+  display: grid; justify-items: center; gap: var(--s2);
+  font: 700 12px/16px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+}
+.wslider span:first-child { font: 900 var(--t-cap)/var(--lh-cap) var(--flex); font-variation-settings: "wght" 1000; color: var(--fg); }
+.wslider span:last-child { font: 100 var(--t-cap)/var(--lh-cap) var(--flex); font-variation-settings: "wght" 100; color: var(--fg); }
+.rail { position: relative; width: var(--s6); height: 40vh; border: 1px solid var(--line); border-radius: var(--s3); cursor: ns-resize; overflow: hidden; touch-action: none; }
+.rail .fill { position: absolute; inset: auto 0 0 0; height: calc(var(--w, .55) * 100%); background: color-mix(in srgb, var(--fg) 18%, transparent); }
+.rail .knob { position: absolute; left: var(--s1); right: var(--s1); height: var(--s1); border-radius: 4px; background: var(--accent); bottom: calc(var(--w, .55) * (100% - 8px)); }
